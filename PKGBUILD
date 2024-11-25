@@ -6,14 +6,15 @@ _linuxprefix=linux612
 _module=bbswitch
 pkgname="${_linuxprefix}-${_module}"
 pkgver=0.8
-pkgrel=6
+pkgrel=7
 pkgdesc="Kernel module allowing to switch dedicated graphics card on Optimus laptops"
 arch=('x86_64')
-url="http://github.com/Bumblebee-Project/bbswitch"
-license=('GPL')
+url="https://github.com/Bumblebee-Project/bbswitch"
+license=('GPL-2.0-or-later')
+groups=("${_linuxprefix}-extramodules")
 depends=("${_linuxprefix}")
 makedepends=("${_linuxprefix}-headers")
-groups=("${_linuxprefix}-extramodules")
+provides=("${_module}")
 source=("$pkgname-$pkgver.tar.gz::https://github.com/Bumblebee-Project/bbswitch/archive/v${pkgver}.tar.gz"
         '0001-proc_ops-struct.patch'
         '0002-kernel-5.7.patch'
@@ -42,6 +43,5 @@ package() {
 
   cd "${_module}-${pkgver}"
   install -Dm644 *.ko -t "$pkgdir/usr/lib/modules/${_kernver}/extramodules/"
-  find "${pkgdir}" -name '*.ko' -exec strip --strip-debug {} +
-  find "${pkgdir}" -name '*.ko' -exec xz {} +
+  find "${pkgdir}" -name '*.ko' -exec zstd --rm -19 {} +
 }
